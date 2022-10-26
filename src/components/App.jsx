@@ -1,4 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectContacts } from 'redux/сontacts/contactsSelectors';
+import { addContact, deleteContact } from 'redux/сontacts/contactsSlice';
+import { filterContacts } from 'redux/filter/filterSlice';
+
 import { nanoid } from 'nanoid';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
@@ -9,52 +13,35 @@ import { ContactList } from './ContactList/ContactList';
 import s from '../components/ContactList/ContactList.module.scss';
 
 export const App = () => {
-  const [contacts, setContacts] = useState(
-    () =>
-      JSON.parse(window.localStorage.getItem('contacts')) ?? [
-        { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-        { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-        { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-        { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-      ]
-  );
+  const contacts = useSelector(selectContacts);
+  const dispatch = useDispatch();
 
-  const [filter, setFilter] = useState('');
-
-  const addContact = contact => {
+  const addNewContact = contact => {
     const newContact = {
       id: nanoid(),
       ...contact,
     };
     contacts.some(({ name }) => name === contact.name)
       ? Notify.failure(`${contact.name} is already in contacts!`)
-      : setContacts(prevState => [...prevState, newContact]);
+      : dispatch(addContact(newContact));
   };
 
   const filtration = filterKey => {
-    setFilter(filterKey);
+    dispatch(filterContacts(filterKey));
   };
 
   const contactDelete = id => {
-    setContacts(prevState => prevState.filter(contact => contact.id !== id));
+    dispatch(deleteContact(id));
   };
-
-  useEffect(() => {
-    window.localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
 
   return (
     <Section>
       <h1>Phonebook</h1>
-      <ContactForm contacts={contacts} addContact={addContact} />
+      <ContactForm addNewContact={addNewContact} />
       <div className={s.contacts}>
         <h2 className={s.h2}>Contacts</h2>
         <Filter filtration={filtration} />
-        <ContactList
-          filter={filter}
-          contacts={contacts}
-          contactDelete={contactDelete}
-        />
+        <ContactList contactDelete={contactDelete} />
       </div>
     </Section>
   );

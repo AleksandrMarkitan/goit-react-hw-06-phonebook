@@ -1,9 +1,14 @@
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
+import { selectContacts } from 'redux/сontacts/contactsSelectors';
+import { selectFilter } from 'redux/filter/filterSelectors';
 import { Contact } from './ContactItem';
 import { DeleteButton } from '../Button/Button';
 import s from './ContactList.module.scss';
 
-export const ContactList = ({ contacts, filter, contactDelete }) => {
+export const ContactList = ({ contactDelete }) => {
+  const contacts = useSelector(selectContacts);
+  const filter = useSelector(selectFilter);
   return (
     <ul className={s.list}>
       {contacts
@@ -23,7 +28,5 @@ export const ContactList = ({ contacts, filter, contactDelete }) => {
 };
 
 ContactList.propTypes = {
-  contacts: PropTypes.array.isRequired,
-  filter: PropTypes.string.isRequired,
   contactDelete: PropTypes.func.isRequired,
 };

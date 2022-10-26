@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { AddButton } from '../Button/Button';
 import s from './ContactForm.module.scss';
 
-export const ContactForm = ({ addContact }) => {
+export const ContactForm = ({ addNewContact }) => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -30,7 +30,7 @@ export const ContactForm = ({ addContact }) => {
 
   const handleOnSubmit = e => {
     e.preventDefault();
-    addContact({ name, number });
+    addNewContact({ name, number });
     onFormReset();
   };
 
@@ -68,5 +68,5 @@ export const ContactForm = ({ addContact }) => {
 };
 
 ContactForm.propTypes = {
-  addContact: PropTypes.func.isRequired,
+  addNewContact: PropTypes.func.isRequired,
 };
